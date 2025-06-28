@@ -2,9 +2,14 @@
 
 namespace Agnula\LatexForLaravel;
 
-use Agnula\LatexForLaravel\View\{Compilers\LatexCompiler, ViewMixinLatex};
+use Agnula\LatexForLaravel\View\Compilers\LatexCompiler;
+use Agnula\LatexForLaravel\View\ViewMixinLatex;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\View\{DynamicComponent, Factory, View, Engines\CompilerEngine, Engines\EngineResolver};
+use Illuminate\View\DynamicComponent;
+use Illuminate\View\Engines\CompilerEngine;
+use Illuminate\View\Engines\EngineResolver;
+use Illuminate\View\Factory;
+use Illuminate\View\View;
 
 final class LatexForLaravelServiceProvider extends ServiceProvider
 {
@@ -27,8 +32,8 @@ final class LatexForLaravelServiceProvider extends ServiceProvider
     public function registerLaterCompiler()
     {
         $this->app->singleton('latex.compiler', function ($app) {
-            Factory::mixin(new ViewMixinLatex());
-            View::mixin(new ViewMixinLatex());
+            Factory::mixin(new ViewMixinLatex);
+            View::mixin(new ViewMixinLatex);
 
             return tap(new LatexCompiler(
                 $app['files'],

@@ -2,10 +2,8 @@
 
 use Agnula\LatexForLaravel\LatexForLaravelServiceProvider;
 use Agnula\LatexForLaravel\View\Compilers\LatexCompiler;
-use Agnula\LatexForLaravel\View\ViewMixinLatex;
-use Illuminate\View\Factory;
-use Illuminate\View\View;
 use Illuminate\View\Engines\EngineResolver;
+use Illuminate\View\Factory;
 
 it('registers the service provider correctly', function () {
     expect($this->app->getProvider(LatexForLaravelServiceProvider::class))

@@ -1,20 +1,18 @@
 <?php
 
 use Agnula\LatexForLaravel\View\ViewMixinLatex;
-use Illuminate\View\View;
 use Illuminate\View\Factory;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Process;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 // Helper function to create a mock view
-function createMockView() {
+function createMockView()
+{
     return Mockery::mock(View::class)->makePartial();
 }
 
 beforeEach(function () {
     // Mock the view and factory for testing
-    $this->viewMixin = new ViewMixinLatex();
+    $this->viewMixin = new ViewMixinLatex;
     $this->compileMacro = $this->viewMixin->compile();
 });
 
@@ -30,7 +28,7 @@ it('returns a closure for the compile macro', function () {
 it('throws exception for invalid destination', function () {
     // Since the ViewMixin code accesses Laravel services before validation,
     // we'll test that the destination validation logic exists in the switch statement
-    $viewMixin = new ViewMixinLatex();
+    $viewMixin = new ViewMixinLatex;
     $compileMacro = $viewMixin->compile();
 
     expect($compileMacro)->toBeInstanceOf(Closure::class);
@@ -39,13 +37,13 @@ it('throws exception for invalid destination', function () {
     $reflection = new ReflectionFunction($compileMacro);
     $source = file_get_contents($reflection->getFileName());
 
-    expect($source)->toContain("Invalid destination: \$destination")
+    expect($source)->toContain('Invalid destination: $destination')
         ->and($source)->toContain('InvalidArgumentException');
 });
 
 it('handles tex-string destination correctly', function () {
     // Test the tex-string logic without mocking Laravel's container
-    $viewMixin = new ViewMixinLatex();
+    $viewMixin = new ViewMixinLatex;
     $compileMacro = $viewMixin->compile();
 
     expect($compileMacro)->toBeInstanceOf(Closure::class);
@@ -60,7 +58,7 @@ it('handles tex-string destination correctly', function () {
 
 it('handles storage destination correctly', function () {
     // This test verifies the logic only, since it requires actual pdflatex execution
-    $viewMixin = new ViewMixinLatex();
+    $viewMixin = new ViewMixinLatex;
     $compileMacro = $viewMixin->compile();
 
     expect($compileMacro)->toBeInstanceOf(Closure::class);
@@ -75,7 +73,7 @@ it('handles storage destination correctly', function () {
 
 it('handles closure destination correctly', function () {
     // This test verifies the logic only
-    $viewMixin = new ViewMixinLatex();
+    $viewMixin = new ViewMixinLatex;
     $compileMacro = $viewMixin->compile();
 
     expect($compileMacro)->toBeInstanceOf(Closure::class);
@@ -87,5 +85,3 @@ it('handles closure destination correctly', function () {
 
     expect($fileContent)->toContain('$destination instanceof Closure');
 });
-
-

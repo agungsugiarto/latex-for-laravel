@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\View;
 
 it('handles complex latex template with all blade features', function () {
     $viewPath = resource_path('views/advanced-template.blade.tex');
     $viewDir = dirname($viewPath);
 
-    if (!File::exists($viewDir)) {
+    if (! File::exists($viewDir)) {
         File::makeDirectory($viewDir, 0755, true);
     }
 
@@ -58,15 +58,15 @@ it('handles complex latex template with all blade features', function () {
             [
                 'title' => 'Introduction',
                 'content' => 'This is the introduction section.',
-                'code' => 'echo "Hello World";'
+                'code' => 'echo "Hello World";',
             ],
             [
                 'title' => 'Methodology',
-                'content' => 'This explains our methodology.'
-            ]
+                'content' => 'This explains our methodology.',
+            ],
         ],
         'includeAppendix' => true,
-        'appendixContent' => '<strong>Important notes</strong> and additional details.'
+        'appendixContent' => '<strong>Important notes</strong> and additional details.',
     ]);
 
     $rendered = $view->render();
@@ -90,7 +90,7 @@ it('creates valid latex that can be compiled directly', function () {
     $viewPath = resource_path('views/standalone-latex.blade.tex');
     $viewDir = dirname($viewPath);
 
-    if (!File::exists($viewDir)) {
+    if (! File::exists($viewDir)) {
         File::makeDirectory($viewDir, 0755, true);
     }
 

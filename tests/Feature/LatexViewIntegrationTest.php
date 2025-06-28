@@ -1,14 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\View;
 
 it('can create and compile latex views', function () {
     // Create a temporary view file
     $viewPath = resource_path('views/test.blade.tex');
     $viewDir = dirname($viewPath);
 
-    if (!File::exists($viewDir)) {
+    if (! File::exists($viewDir)) {
         File::makeDirectory($viewDir, 0755, true);
     }
 
@@ -33,7 +33,7 @@ it('can create and compile latex views', function () {
     $view = View::make('test', [
         'title' => 'Test Document',
         'author' => 'John Doe',
-        'content' => 'This is a test content.'
+        'content' => 'This is a test content.',
     ]);
 
     expect($view)->toBeInstanceOf(\Illuminate\View\View::class);
@@ -53,7 +53,7 @@ it('processes blade directives correctly in latex views', function () {
     $viewPath = resource_path('views/blade-test.blade.tex');
     $viewDir = dirname($viewPath);
 
-    if (!File::exists($viewDir)) {
+    if (! File::exists($viewDir)) {
         File::makeDirectory($viewDir, 0755, true);
     }
 
@@ -79,7 +79,7 @@ Literal text: \blade{This is literal}
         'raw' => '<strong>Bold Text</strong>',
         'escaped' => 'Safe & Sound',
         'showSection' => true,
-        'sectionTitle' => 'Dynamic Section'
+        'sectionTitle' => 'Dynamic Section',
     ]);
 
     $rendered = $view->render();
@@ -97,7 +97,7 @@ it('can use view extension blade.tex', function () {
     $viewPath = resource_path('views/extension-test.blade.tex');
     $viewDir = dirname($viewPath);
 
-    if (!File::exists($viewDir)) {
+    if (! File::exists($viewDir)) {
         File::makeDirectory($viewDir, 0755, true);
     }
 

@@ -4,7 +4,7 @@ use Agnula\LatexForLaravel\View\Compilers\LatexCompiler;
 use Illuminate\Filesystem\Filesystem;
 
 it('compiles latex content with blade directives', function () {
-    $files = new Filesystem();
+    $files = new Filesystem;
     $compiler = new LatexCompiler($files, '/tmp', '', true, 'php');
 
     $content = '
@@ -36,7 +36,7 @@ it('compiles latex content with blade directives', function () {
 });
 
 it('handles nested blade directives correctly', function () {
-    $files = new Filesystem();
+    $files = new Filesystem;
     $compiler = new LatexCompiler($files, '/tmp', '', true, 'php');
 
     $content = '\blade{!! isset($data) ? $data : "default" !!}';
@@ -50,7 +50,7 @@ it('handles nested blade directives correctly', function () {
 });
 
 it('preserves latex content without blade directives', function () {
-    $files = new Filesystem();
+    $files = new Filesystem;
     $compiler = new LatexCompiler($files, '/tmp', '', true, 'php');
 
     $content = '
@@ -78,7 +78,7 @@ This is a test document.
 });
 
 it('handles multiple blade directives in one line', function () {
-    $files = new Filesystem();
+    $files = new Filesystem;
     $compiler = new LatexCompiler($files, '/tmp', '', true, 'php');
 
     $content = '\blade{{ $first }} and \blade{!! $second !!} with \blade{literal}';
@@ -102,7 +102,7 @@ it('handles multiple blade directives in one line', function () {
 });
 
 it('extends blade compiler correctly', function () {
-    $files = new Filesystem();
+    $files = new Filesystem;
     $compiler = new LatexCompiler($files, '/tmp', '', true, 'php');
 
     expect($compiler)->toBeInstanceOf(\Illuminate\View\Compilers\BladeCompiler::class);

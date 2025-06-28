@@ -3,12 +3,12 @@
 namespace Agnula\LatexForLaravel\View;
 
 use Closure;
-use Illuminate\Support\Str;
-use InvalidArgumentException;
+use Illuminate\Process\Exceptions\ProcessFailedException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Process\Exceptions\ProcessFailedException;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 /**
  * Provides the 'compile' macro for Laravel View instances to render LaTeX as PDF/TeX.
@@ -38,17 +38,17 @@ final class ViewMixinLatex
         /**
          * Compile the view as LaTeX and output or store the result.
          *
-         * @param string $fileName    Output file name (default: 'document.pdf').
-         * @param string|Closure $destination Output mode:
-         *                            - 'inline': Display PDF in browser.
-         *                            - 'download': Force download PDF.
-         *                            - 'storage': Save PDF to storage.
-         *                            - 'storage-inline': Save PDF to storage and display inline.
-         *                            - 'storage-download': Save PDF to storage and download.
-         *                            - 'string': Return PDF as a string response.
-         *                            - 'tex': Download the .tex source.
-         *                            - 'tex-string': Return the LaTeX source as a string.
-         *                            - 'storage-tex': Save the .tex source to storage.
+         * @param  string  $fileName  Output file name (default: 'document.pdf').
+         * @param  string|Closure  $destination  Output mode:
+         *                                       - 'inline': Display PDF in browser.
+         *                                       - 'download': Force download PDF.
+         *                                       - 'storage': Save PDF to storage.
+         *                                       - 'storage-inline': Save PDF to storage and display inline.
+         *                                       - 'storage-download': Save PDF to storage and download.
+         *                                       - 'string': Return PDF as a string response.
+         *                                       - 'tex': Download the .tex source.
+         *                                       - 'tex-string': Return the LaTeX source as a string.
+         *                                       - 'storage-tex': Save the .tex source to storage.
          * @return \Symfony\Component\HttpFoundation\Response|string|bool
          *
          * @throws ProcessFailedException If LaTeX compilation fails.
@@ -78,8 +78,8 @@ final class ViewMixinLatex
             // Remove extension for base temp name
             $tempBase = pathinfo($compiledPath, PATHINFO_FILENAME);
 
-            $texFile = $tempDir . DIRECTORY_SEPARATOR . $tempBase . '.tex';
-            $pdfFile = $tempDir . DIRECTORY_SEPARATOR . $tempBase . '.pdf';
+            $texFile = $tempDir.DIRECTORY_SEPARATOR.$tempBase.'.tex';
+            $pdfFile = $tempDir.DIRECTORY_SEPARATOR.$tempBase.'.pdf';
 
             File::put($texFile, $latex);
 
@@ -116,8 +116,8 @@ final class ViewMixinLatex
                 case 'inline':
                     // Display PDF in browser
                     return response()->file($pdfFile, [
-                        'Content-Type'        => 'application/pdf',
-                        'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+                        'Content-Type' => 'application/pdf',
+                        'Content-Disposition' => 'inline; filename="'.$fileName.'"',
                     ]);
                 case 'download':
                     // Download PDF
@@ -127,37 +127,43 @@ final class ViewMixinLatex
                 case 'storage':
                     // Save PDF to storage
                     Storage::put($fileName, $pdfContent);
+
                     return true;
                 case 'storage-inline':
                     // Save PDF to storage and display in browser
                     Storage::put($fileName, $pdfContent);
+
                     return response()->file($pdfFile, [
-                        'Content-Type'        => 'application/pdf',
-                        'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+                        'Content-Type' => 'application/pdf',
+                        'Content-Disposition' => 'inline; filename="'.$fileName.'"',
                     ]);
                 case 'storage-download':
                     // Save PDF to storage and download
                     Storage::put($fileName, $pdfContent);
+
                     return response()->download($pdfFile, $fileName, [
                         'Content-Type' => 'application/pdf',
                     ]);
                 case 'tex':
                     // Download .tex source
-                    $texOutName = pathinfo($fileName, PATHINFO_FILENAME) . '.tex';
+                    $texOutName = pathinfo($fileName, PATHINFO_FILENAME).'.tex';
+
                     return response()->download($texFile, $texOutName, [
                         'Content-Type' => 'application/x-tex',
                     ]);
                 case 'tex-string':
                     // Return LaTeX source as plain text
-                    $texOutName = pathinfo($fileName, PATHINFO_FILENAME) . '.tex';
+                    $texOutName = pathinfo($fileName, PATHINFO_FILENAME).'.tex';
+
                     return response($latex, 200, [
-                        'Content-Type'        => 'text/plain',
-                        'Content-Disposition' => 'inline; filename="' . $texOutName . '"',
+                        'Content-Type' => 'text/plain',
+                        'Content-Disposition' => 'inline; filename="'.$texOutName.'"',
                     ]);
                 case 'storage-tex':
                     // Save .tex source to storage
-                    $texOutName = pathinfo($fileName, PATHINFO_FILENAME) . '.tex';
+                    $texOutName = pathinfo($fileName, PATHINFO_FILENAME).'.tex';
                     Storage::put($texOutName, file_get_contents($texFile));
+
                     return true;
                 default:
                     throw new InvalidArgumentException("Invalid destination: $destination");
