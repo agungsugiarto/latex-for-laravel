@@ -38,8 +38,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Agnula\\LatexForLaravel\\": "src/",
-            "Agnula\\LatexForLaravel\\Database\\Factories\\": "database/factories/"
+            "Agnula\\LatexForLaravel\\": "src/"
         }
     },
     "autoload-dev": {
