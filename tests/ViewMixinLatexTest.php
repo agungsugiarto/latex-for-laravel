@@ -1,24 +1,11 @@
 <?php
 
 use Agnula\LatexForLaravel\View\ViewMixinLatex;
-use Illuminate\View\View;
-use Mockery;
-
-// Helper function to create a mock view
-function createMockView()
-{
-    return Mockery::mock(View::class)->makePartial();
-}
 
 beforeEach(function () {
     // Mock the view and factory for testing
     $this->viewMixin = new ViewMixinLatex;
     $this->compileMacro = $this->viewMixin->compile();
-});
-
-afterEach(function () {
-    // Clean up any mocks to prevent interference with other tests
-    Mockery::close();
 });
 
 it('returns a closure for the compile macro', function () {

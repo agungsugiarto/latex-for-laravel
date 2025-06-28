@@ -66,14 +66,18 @@ final class ViewMixinLatex
          *  - 'storage-tex': Save the LaTeX source to storage.
          */
         return function (string $fileName = 'document.pdf', string|Closure $destination = 'inline') {
+            // When used as a mixin, $this refers to the View instance
+            // Cast to View to help PHPStan understand the context
+            $view = $this;
+            
             // Render the view as LaTeX
-            $latex = $this->render();
+            $latex = $view->render(); // @phpstan-ignore-line
 
             // Use the compiled view path as the base for temp files
             $tempDir = config('view.compiled', sys_get_temp_dir());
 
             // Get the compiled path for this view, which is a full file path
-            $compiledPath = app('latex.compiler')->getCompiledPath($this->getPath());
+            $compiledPath = app('latex.compiler')->getCompiledPath($view->getPath()); // @phpstan-ignore-line
 
             // Remove extension for base temp name
             $tempBase = pathinfo($compiledPath, PATHINFO_FILENAME);
@@ -83,7 +87,7 @@ final class ViewMixinLatex
 
             File::put($texFile, $latex);
 
-            $callerViewDir = dirname(app('view')->getFinder()->find($this->name()));
+            $callerViewDir = dirname(app('view')->getFinder()->find($view->name())); // @phpstan-ignore-line
 
             $texinputs = collect(config('filesystems.disks'))
                 ->filter(fn ($disk) => ($disk['driver'] ?? null) === 'local' && isset($disk['root']))
