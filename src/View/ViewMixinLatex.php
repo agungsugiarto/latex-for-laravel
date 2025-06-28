@@ -69,7 +69,7 @@ final class ViewMixinLatex
             // When used as a mixin, $this refers to the View instance
             // Cast to View to help PHPStan understand the context
             $view = $this;
-            
+
             // Render the view as LaTeX
             $latex = $view->render(); // @phpstan-ignore-line
 
