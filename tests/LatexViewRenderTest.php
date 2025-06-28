@@ -2,7 +2,7 @@
 
 it('can render latex view with blade directives using real Laravel view', function () {
     // Setup view path to use our templates directory
-    $this->app['view']->addLocation(__DIR__ . '/templates');
+    $this->app['view']->addLocation(__DIR__.'/templates');
 
     // Test data
     $data = [
@@ -12,11 +12,11 @@ it('can render latex view with blade directives using real Laravel view', functi
         'user' => (object) [
             'name' => 'Alice Smith',
             'email' => 'alice@example.com',
-            'score' => 95
+            'score' => 95,
         ],
         'desa' => (object) [
-            'kecamatan' => 'Terara'
-        ]
+            'kecamatan' => 'Terara',
+        ],
     ];
 
     // Render the view using the template file
@@ -39,15 +39,15 @@ it('can render latex view with blade directives using real Laravel view', functi
 
 it('handles the specific bug case correctly in real Laravel view', function () {
     // Setup view path to use our templates directory
-    $this->app['view']->addLocation(__DIR__ . '/templates');
+    $this->app['view']->addLocation(__DIR__.'/templates');
 
     $data = [
         'desa' => (object) [
             'kabupaten' => 'LOMBOK TIMUR',
-            'kecamatan' => 'Terara'
+            'kecamatan' => 'Terara',
         ],
         'hello' => 'World',
-        'unescaped' => 'Content'
+        'unescaped' => 'Content',
     ];
 
     $rendered = view('bug-test', $data)->render();

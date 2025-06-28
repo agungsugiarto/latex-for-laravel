@@ -2,7 +2,7 @@
 
 it('renders simple document template correctly', function () {
     // Setup view path to use our templates directory
-    $this->app['view']->addLocation(__DIR__ . '/templates');
+    $this->app['view']->addLocation(__DIR__.'/templates');
 
     $data = [
         'title' => 'My Test Document',
@@ -11,11 +11,11 @@ it('renders simple document template correctly', function () {
         'user' => (object) [
             'name' => 'Alice Smith',
             'email' => 'alice@example.com',
-            'score' => 95
+            'score' => 95,
         ],
         'desa' => (object) [
-            'kecamatan' => 'Terara'
-        ]
+            'kecamatan' => 'Terara',
+        ],
     ];
 
     $rendered = view('simple-document', $data)->render();
@@ -37,15 +37,15 @@ it('renders simple document template correctly', function () {
 
 it('handles bug test template correctly', function () {
     // Setup view path to use our templates directory
-    $this->app['view']->addLocation(__DIR__ . '/templates');
+    $this->app['view']->addLocation(__DIR__.'/templates');
 
     $data = [
         'desa' => (object) [
             'kabupaten' => 'LOMBOK TIMUR',
-            'kecamatan' => 'TERARA'
+            'kecamatan' => 'TERARA',
         ],
         'hello' => 'World',
-        'unescaped' => 'Content'
+        'unescaped' => 'Content',
     ];
 
     $rendered = view('bug-test', $data)->render();
@@ -57,16 +57,16 @@ it('handles bug test template correctly', function () {
         ->toContain('World')
         ->toContain('Content')
         ->toContain('literal text')
-        
+
         // Ensure LaTeX structure is preserved
         ->toContain('\documentclass{article}')
         ->toContain('\Large')
         ->toContain('\textbf')
-        
+
         // Ensure no blade directives remain
         ->not->toContain('\blade{{')
         ->not->toContain('\blade{!!')
-        
+
         // Ensure variables don't have extra braces beyond LaTeX commands
         ->not->toContain('{LOMBOK TIMUR}'); // This would indicate double braces
 });

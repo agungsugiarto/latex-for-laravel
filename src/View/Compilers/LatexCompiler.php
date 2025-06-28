@@ -22,7 +22,7 @@ final class LatexCompiler extends BladeCompiler
         $contents = $this->files->get($this->getPath());
 
         // Transform \blade directives to avoid Blade interference
-        
+
         // \blade{!! ... !!} → {!! ... !!}
         $contents = preg_replace('/\\\\blade\s*({!!\s*.*?\s*!!})/s', '$1', $contents);
 
