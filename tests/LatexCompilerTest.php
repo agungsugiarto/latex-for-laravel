@@ -4,9 +4,6 @@ use Agnula\LatexForLaravel\View\Compilers\LatexCompiler;
 use Illuminate\Filesystem\Filesystem;
 
 it('compiles latex content with blade directives', function () {
-    $files = new Filesystem;
-    $compiler = new LatexCompiler($files, '/tmp', '', true, 'php');
-
     $content = '
 \documentclass{article}
 \newcommand{\blade}[1]{}
@@ -36,9 +33,6 @@ it('compiles latex content with blade directives', function () {
 });
 
 it('handles nested blade directives correctly', function () {
-    $files = new Filesystem;
-    $compiler = new LatexCompiler($files, '/tmp', '', true, 'php');
-
     $content = '\blade{!! isset($data) ? $data : "default" !!}';
 
     // Test the preprocessing step manually
@@ -78,9 +72,6 @@ This is a test document.
 });
 
 it('handles multiple blade directives in one line', function () {
-    $files = new Filesystem;
-    $compiler = new LatexCompiler($files, '/tmp', '', true, 'php');
-
     $content = '\blade{{ $first }} and \blade{!! $second !!} with \blade{literal}';
 
     // Test the preprocessing step manually
