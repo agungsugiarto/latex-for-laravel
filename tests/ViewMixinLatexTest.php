@@ -1,8 +1,8 @@
 <?php
 
-use Mockery;
-use Illuminate\View\View;
 use Agnula\LatexForLaravel\View\ViewMixinLatex;
+use Illuminate\View\View;
+use Mockery;
 
 // Helper function to create a mock view
 function createMockView()
