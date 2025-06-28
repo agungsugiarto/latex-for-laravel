@@ -1,10 +1,14 @@
 {
     "name": "agungsugiarto/latex-for-laravel",
-    "description": "This is my package latex-for-laravel",
+    "description": "A Laravel package that provides seamless integration between Laravel Blade templates and LaTeX, enabling dynamic PDF generation",
     "keywords": [
-        "Agnula",
         "laravel",
-        "latex-for-laravel"
+        "latex",
+        "pdf",
+        "blade",
+        "template",
+        "document-generation",
+        "agungsugiarto"
     ],
     "homepage": "https://github.com/agungsugiarto/latex-for-laravel",
     "license": "MIT",
