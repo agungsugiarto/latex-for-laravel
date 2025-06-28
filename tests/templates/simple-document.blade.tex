@@ -1,0 +1,24 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\newcommand{\blade}[1]{}
+
+\begin{document}
+
+\title{\blade{!! $title !!}}
+\author{\blade{{ $author }}}
+\date{\blade{{ $date }}}
+\maketitle
+
+\section{Introduction}
+Welcome \blade{{ $user->name }}!
+
+\section{Data}
+Name: \blade{{ $user->name }}, Email: \blade{{ $user->email }}, Score: \blade{{ $user->score }}
+
+\section{Literal Content}
+\blade{This is literal content}
+
+\section{Bug Test Case}
+User from \textbf{\blade{{ $desa->kecamatan }}} area.
+
+\end{document}

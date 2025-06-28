@@ -1,0 +1,18 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\newcommand{\blade}[1]{}
+
+\begin{document}
+
+% Test specific bug case
+\Large \textbf{PEMERINTAH KABUPATEN \blade{{ $desa->kabupaten }}} \\
+
+% Test various patterns
+\textbf{\blade{{ $hello }}}
+\blade{!! $unescaped !!}
+\blade{literal text}
+
+% Test complex patterns
+\Large \textbf{\blade{{ $desa->kecamatan }}} \\
+
+\end{document}

@@ -1,0 +1,138 @@
+\documentclass[10pt]{article}
+
+% ------------------------------------------
+% PACKAGE
+% ------------------------------------------
+\usepackage[a4paper,top=1.6cm,bottom=1.6cm,left=2.2cm,right=2cm]{geometry}
+\usepackage{bookman}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{datetime2}
+
+% ------------------------------------------
+% KOMPATIBILITAS BLADE
+% ------------------------------------------
+\newcommand{\blade}[1]{}
+
+% ------------------------------------------
+% PENGATURAN UMUM
+% ------------------------------------------
+\setstretch{1.05}
+\renewcommand{\arraystretch}{1.05}
+\setlength{\tabcolsep}{5pt}
+
+\renewcommand{\thesection}{\Roman{section}.}
+\titleformat{\section}{\normalsize\bfseries}{\thesection}{0.4em}{}
+
+\newcommand{\spacering}{\vspace{0.7em}}
+\newcommand{\spaceblock}{\vspace{1.2em}}
+
+\begin{document}
+
+% ------------------------------------------
+% KOP SURAT
+% ------------------------------------------
+\noindent
+\begin{minipage}[c]{0.15\textwidth}
+    \includegraphics[width=2.4cm]{opensid_logo.png}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.8\textwidth}
+    \centering
+    \Large \textbf{PEMERINTAH KABUPATEN \blade{{ $desa->kabupaten }}} \\
+    \Large \textbf{KECAMATAN \blade{{ $desa->kecamatan }}} \\
+    \Large \textbf{\blade{!! $desa->sebutan !!} \blade{!! $desa->nama !!}} \\
+    {\small \blade{{ $desa->alamat }}}
+\end{minipage}
+
+\spacering
+\noindent\rule{\textwidth}{1pt}
+
+% ------------------------------------------
+% JUDUL SURAT
+% ------------------------------------------
+\begin{center}
+    {\large \textbf{SURAT KETERANGAN BIODATA PENDUDUK}}\\
+    Nomor: \blade{{ $surat->nomor }}
+\end{center}
+
+\spaceblock
+
+% ------------------------------------------
+% BAGIAN I: DATA KELUARGA
+% ------------------------------------------
+\section{Data Keluarga}
+\begin{tabularx}{\textwidth}{@{}p{5cm}p{0.1cm}X@{}}
+    Nama Kepala Keluarga & : & \blade{{ $penduduk->keluarga->kepala->nama ?? '-' }} \\
+    Nomor Kartu Keluarga & : & \blade{{ $penduduk->keluarga->no_kk ?? '-' }} \\
+    Alamat               & : & \blade{{ $penduduk->alamat }}, \blade{{ $desa->sebutan }} \blade{{ $desa->nama }}, KEC. \blade{{ $desa->kecamatan }}, KAB. \blade{{ $desa->kabupaten }} \\
+\end{tabularx}
+
+\spacering
+
+% ------------------------------------------
+% BAGIAN II: DATA INDIVIDU
+% ------------------------------------------
+\section{Data Individu}
+\begin{tabularx}{\textwidth}{@{}p{5cm}p{0.1cm}X@{}}
+    Nama Lengkap          & : & \textbf{\blade{!! $penduduk->nama !!}} \\
+    NIK                   & : & \blade{{ $penduduk->nik }} \\
+    Alamat Sebelumnya     & : & \blade{{ $penduduk->alamat_sebelumnya ?? '-' }} \\
+    Paspor / Tgl Akhir    & : & \blade{{ $penduduk->paspor ?? '-' }} / \blade{{ $penduduk->tgl_paspor }} \\
+    Jenis Kelamin         & : & \blade{{ $penduduk->sex }} \\
+    Tempat, Tgl Lahir     & : & \blade{{ $penduduk->tempat_lahir }}, \blade{{ $penduduk->tanggal_lahir }} \\
+    Akta Kelahiran        & : & \blade{{ $penduduk->akta_lahir ?? '-' }} \\
+    Golongan Darah        & : & \blade{{ $penduduk->gol_darah ?? '-' }} \\
+    Agama                 & : & \blade{{ $penduduk->agama ?? '-' }} \\
+    Status Perkawinan     & : & \blade{{ $penduduk->status_kawin ?? '-' }} \\
+    Akta Nikah / Tgl      & : & \blade{{ $penduduk->akta_nikah ?? '-' }} / \blade{{ $penduduk->tgl_nikah }} \\
+    Akta Cerai / Tgl      & : & \blade{{ $penduduk->akta_cerai ?? '-' }} / \blade{{ $penduduk->tgl_cerai }} \\
+    Status Hub. Keluarga  & : & \blade{{ $penduduk->status_hubungan ?? '-' }} \\
+    Kelainan Fisik/Mental & : & \blade{{ $penduduk->cacat ?? '-' }} \\
+    Pendidikan Terakhir   & : & \blade{{ $penduduk->pendidikan ?? '-' }} \\
+    Pekerjaan             & : & \blade{{ $penduduk->pekerjaan ?? '-' }} \\
+\end{tabularx}
+
+\spacering
+
+% ------------------------------------------
+% BAGIAN III: DATA ORANG TUA
+% ------------------------------------------
+\section{Data Orang Tua}
+\begin{tabularx}{\textwidth}{@{}p{5cm}p{0.1cm}X@{}}
+    Nama Ibu  & : & \blade{{ $penduduk->ibu->nama ?? '-' }} \\
+    NIK Ibu   & : & \blade{{ $penduduk->ibu->nik ?? '-' }} \\
+    Nama Ayah & : & \blade{{ $penduduk->ayah->nama ?? '-' }} \\
+    NIK Ayah  & : & \blade{{ $penduduk->ayah->nik ?? '-' }} \\
+\end{tabularx}
+
+\spaceblock
+
+% ------------------------------------------
+% PENUTUP
+% ------------------------------------------
+Demikian surat ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.
+
+\spaceblock
+
+% ------------------------------------------
+% BLOK TANDA TANGAN
+% ------------------------------------------
+\noindent
+\hfill
+\begin{minipage}{0.45\textwidth}
+    \centering
+    \blade{{ $desa->nama }}, \blade{{ $tanggal_surat }} \\[-0.2em]
+    \textbf{\blade{!! $penandatangan->jabatan !!}} \\ [4.2em]
+    \textbf{\blade{!! $penandatangan->nama !!}} \\ [-0.3em]
+    \rule{5.2cm}{0.4pt} \\[-0.2em]
+    {\footnotesize NIP: \blade{{ $penandatangan->nip ?? '-' }}}
+\end{minipage}
+
+\end{document}
