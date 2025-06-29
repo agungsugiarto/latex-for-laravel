@@ -1,0 +1,19 @@
+\documentclass{article}
+\usepackage{amsmath}
+\newcommand{\blade}[1]{}
+\newcommand{\blademath}[1]{}
+
+\begin{document}
+
+\title{\blade{{ $title }}}
+
+% Using the custom math processor
+\blademath{x^2 + y^2 = z^2}
+
+% Standard blade directives still work
+\blade{@foreach($equations as $eq)}
+\blade{{ $eq->description }}
+\blademath{\blade{{ $eq->formula }}}
+\blade{@endforeach}
+
+\end{document}

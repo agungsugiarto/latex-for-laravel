@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\newcommand{\blade}[1]{}
+
+\begin{document}
+
+\title{\blade{{ $title }}}
+\author{\blade{{ $author }}}
+\date{\blade{{ $date }}}
+\maketitle
+
+\tableofcontents
+
+\blade{@foreach($sections as $section)}
+\section{\blade{{ $section['title'] }}}
+\blade{{ $section['content'] }}
+
+\blade{@if(isset($section['code']))}
+\begin{verbatim}
+\blade{!! $section['code'] !!}
+\end{verbatim}
+\blade{@endif}
+
+\blade{@endforeach}
+
+\blade{@if($includeAppendix)}
+\appendix
+\section{Additional Information}
+\blade{!! $appendixContent !!}
+\blade{@endif}
+
+\end{document}

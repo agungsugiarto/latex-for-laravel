@@ -1,0 +1,20 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\begin{document}
+
+\title{{{ $title }}}
+
+% Using mathematical notation processor
+\bladeformula{E = mc^2}
+
+% Using figure processor (path, caption, label)
+\bladefigure{images/chart.png}{Sales Chart}{fig:sales}
+
+% Standard blade directives still work
+@foreach($formulas as $formula)
+Formula: {{ $formula->latex }}
+@endforeach
+
+\end{document}

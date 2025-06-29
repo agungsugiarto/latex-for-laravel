@@ -1,0 +1,19 @@
+\documentclass{article}
+\begin{document}
+
+\blade{@component('latex.components.latex-section', [
+    'title' => 'Introduction',
+    'content' => $intro,
+    'includeSubsections' => true,
+    'subsections' => ['Overview', 'Goals']
+])}
+\blade{@endcomponent}
+
+\blade{@component('latex.components.latex-section', [
+    'title' => 'Conclusion',
+    'content' => $conclusion,
+    'includeSubsections' => false
+])}
+\blade{@endcomponent}
+
+\end{document}

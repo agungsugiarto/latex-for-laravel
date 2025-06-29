@@ -1,0 +1,15 @@
+\documentclass{article}
+\blade{@include('latex.partials.header')}
+\newcommand{\blade}[1]{}
+
+\begin{document}
+
+\title{\blade{{ $title }}}
+
+\section{Main Content}
+\blade{@yield('content')}
+
+\section{Footer}
+\blade{@include('latex.partials.footer')}
+
+\end{document}

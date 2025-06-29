@@ -52,34 +52,6 @@ it('can register math extension processors', function () {
 });
 
 it('renders math extension template correctly', function () {
-    // Create template file
-    $templatePath = __DIR__.'/templates/math-extension.blade.tex';
-
-    $templateContent = '\documentclass{article}
-\usepackage{amsmath}
-\newcommand{\blade}[1]{}
-\newcommand{\blademath}[1]{}
-
-\begin{document}
-
-\title{\blade{{ $title }}}
-
-% Using the custom math processor
-\blademath{x^2 + y^2 = z^2}
-
-% Standard blade directives still work
-\blade{@foreach($equations as $eq)}
-\blade{{ $eq->description }}
-\blademath{\blade{{ $eq->formula }}}
-\blade{@endforeach}
-
-\end{document}';
-
-    file_put_contents($templatePath, $templateContent);
-
-    // Setup view path
-    $this->app['view']->addLocation(__DIR__.'/templates');
-
     $data = [
         'title' => 'Mathematical Document',
         'equations' => [
@@ -88,7 +60,7 @@ it('renders math extension template correctly', function () {
         ],
     ];
 
-    $rendered = view('math-extension', $data)->render();
+    $rendered = view('latex.math-extension', $data)->render();
 
     expect($rendered)
         ->toContain('Mathematical Document')
@@ -97,37 +69,14 @@ it('renders math extension template correctly', function () {
         ->toContain('Einstein equation')
         ->toContain('MATH_RENDERED[<?php echo e(a^2 + b^2 = c^2); ?>]') // Variable should be processed by Blade
         ->toContain('MATH_RENDERED[<?php echo e(E = mc^2); ?>]'); // Variable should be processed by Blade
-
-    // Cleanup
-    unlink($templatePath);
 });
 
 it('integrates with blade template system', function () {
-    // Create simple template
-    $templatePath = __DIR__.'/templates/simple-math.blade.tex';
-
-    $templateContent = '\documentclass{article}
-\newcommand{\blade}[1]{}
-\newcommand{\blademath}[1]{}
-
-\begin{document}
-\title{\blade{{ $title }}}
-\blademath{E = mc^2}
-\end{document}';
-
-    file_put_contents($templatePath, $templateContent);
-
-    // Setup view path
-    $this->app['view']->addLocation(__DIR__.'/templates');
-
     $data = ['title' => 'Simple Math Document'];
 
-    $rendered = view('simple-math', $data)->render();
+    $rendered = view('latex.simple-math', $data)->render();
 
     expect($rendered)
         ->toContain('Simple Math Document')
         ->toContain('MATH_RENDERED[E = mc^2]');
-
-    // Cleanup
-    unlink($templatePath);
 });

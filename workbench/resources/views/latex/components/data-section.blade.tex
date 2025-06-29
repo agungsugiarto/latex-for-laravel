@@ -1,0 +1,5 @@
+\section{\blade{{ $title }}}
+
+\blade{@foreach($items as $item)}
+\item \blade{{ $item['name'] }}: \blade{{ $item['value'] }}
+\blade{@endforeach}

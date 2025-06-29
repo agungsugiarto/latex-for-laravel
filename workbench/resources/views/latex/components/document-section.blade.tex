@@ -1,0 +1,10 @@
+\section{\blade{{ $title }}}
+\blade{{ $content }}
+
+\blade{@if(isset($subsection))}
+\blade{@component('latex.components.sub-section', [
+    'title' => $subsection['title'],
+    'content' => $subsection['content']
+])}
+\blade{@endcomponent}
+\blade{@endif}

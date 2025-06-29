@@ -1,26 +1,11 @@
 <?php
 
 it('can render latex view with blade directives using real Laravel view', function () {
-    // Setup view path to use our templates directory
-    $this->app['view']->addLocation(__DIR__.'/templates');
-
-    // Test data
-    $data = [
-        'title' => 'My Test Document',
-        'author' => 'John Doe',
-        'date' => 'June 2025',
-        'user' => (object) [
-            'name' => 'Alice Smith',
-            'email' => 'alice@example.com',
-            'score' => 95,
-        ],
-        'desa' => (object) [
-            'kecamatan' => 'Terara',
-        ],
-    ];
+    // Use pre-configured test data
+    $data = $this->getSimpleDocumentData();
 
     // Render the view using the template file
-    $rendered = view('simple-document', $data)->render();
+    $rendered = view('latex.simple-document', $data)->render();
 
     // Assertions - variables now render without extra braces
     expect($rendered)->toContain('My Test Document')
@@ -38,19 +23,10 @@ it('can render latex view with blade directives using real Laravel view', functi
 });
 
 it('handles the specific bug case correctly in real Laravel view', function () {
-    // Setup view path to use our templates directory
-    $this->app['view']->addLocation(__DIR__.'/templates');
+    // Use pre-configured test data
+    $data = $this->getBugTestData();
 
-    $data = [
-        'desa' => (object) [
-            'kabupaten' => 'LOMBOK TIMUR',
-            'kecamatan' => 'Terara',
-        ],
-        'hello' => 'World',
-        'unescaped' => 'Content',
-    ];
-
-    $rendered = view('bug-test', $data)->render();
+    $rendered = view('latex.bug-test', $data)->render();
 
     // Should contain "Terara" without extra braces
     expect($rendered)->toContain('Terara')

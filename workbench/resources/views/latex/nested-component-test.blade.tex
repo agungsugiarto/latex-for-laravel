@@ -1,0 +1,14 @@
+\documentclass{article}
+\begin{document}
+
+\blade{@component('latex.components.document-section', [
+    'title' => 'Main Section',
+    'content' => 'This is the main content.',
+    'subsection' => [
+        'title' => 'Sub Section',
+        'content' => 'This is sub content.'
+    ]
+])}
+\blade{@endcomponent}
+
+\end{document}

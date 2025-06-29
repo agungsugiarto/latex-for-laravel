@@ -59,23 +59,12 @@ it('processes academic citations correctly through service provider', function (
     $provider = new TestLatexExtensionServiceProvider($this->app);
     $provider->boot();
 
-    // Create a simple test file
-    $testPath = __DIR__.'/templates/citation-test.blade.tex';
-    $content = 'According to \acadcite{Smith}{2023} and \acadcite{Doe}{2024}, this is true.';
-    file_put_contents($testPath, $content);
-
-    // Setup view path
-    $this->app['view']->addLocation(__DIR__.'/templates');
-
-    $result = view('citation-test')->render();
+    $result = view('latex.citation-test')->render();
 
     expect($result)
         ->toContain('\cite{Smith} (2023)')
         ->toContain('\cite{Doe} (2024)')
         ->not->toContain('\acadcite{');
-
-    // Cleanup
-    unlink($testPath);
 });
 
 it('processes table generation through service provider', function () {
@@ -83,20 +72,9 @@ it('processes table generation through service provider', function () {
     $provider = new TestLatexExtensionServiceProvider($this->app);
     $provider->boot();
 
-    // Create a simple test file
-    $testPath = __DIR__.'/templates/table-test.blade.tex';
-    $content = '\bladetable{header1,header2,header3}';
-    file_put_contents($testPath, $content);
-
-    // Setup view path
-    $this->app['view']->addLocation(__DIR__.'/templates');
-
-    $result = view('table-test')->render();
+    $result = view('latex.table-test')->render();
 
     expect($result)->toContain('TABLE_MARKER[header1,header2,header3]');
-
-    // Cleanup
-    unlink($testPath);
 });
 
 it('renders template with service provider extensions', function () {
@@ -104,33 +82,11 @@ it('renders template with service provider extensions', function () {
     $provider = new TestLatexExtensionServiceProvider($this->app);
     $provider->boot();
 
-    // Create template file
-    $templatePath = __DIR__.'/templates/service-provider-test.blade.tex';
-
-    $templateContent = '\documentclass{article}
-
-\begin{document}
-
-\title{{{ $title }}}
-
-According to \acadcite{Johnson}{2023}, this method works well.
-
-\bladetable{Name,Age,Score}
-
-Multiple citations: \acadcite{Smith}{2021} and \acadcite{Brown}{2022}.
-
-\end{document}';
-
-    file_put_contents($templatePath, $templateContent);
-
-    // Setup view path
-    $this->app['view']->addLocation(__DIR__.'/templates');
-
     $data = [
         'title' => 'Research Document',
     ];
 
-    $rendered = view('service-provider-test', $data)->render();
+    $rendered = view('latex.service-provider-test', $data)->render();
 
     expect($rendered)
         ->toContain('Research Document')
@@ -138,9 +94,6 @@ Multiple citations: \acadcite{Smith}{2021} and \acadcite{Brown}{2022}.
         ->toContain('\cite{Smith} (2021)')
         ->toContain('\cite{Brown} (2022)')
         ->toContain('TABLE_MARKER[Name,Age,Score]');
-
-    // Cleanup
-    unlink($templatePath);
 });
 
 it('handles multiple service provider extensions', function () {
@@ -157,22 +110,11 @@ it('handles multiple service provider extensions', function () {
         return $next($content);
     });
 
-    // Create a simple test file
-    $testPath = __DIR__.'/templates/multi-extension-test.blade.tex';
-    $content = '\acadcite{Author}{2023} mentions \highlight{important text}highlight';
-    file_put_contents($testPath, $content);
-
-    // Setup view path
-    $this->app['view']->addLocation(__DIR__.'/templates');
-
-    $result = view('multi-extension-test')->render();
+    $result = view('latex.multi-extension-test')->render();
 
     expect($result)
         ->toContain('\cite{Author} (2023)')
         ->toContain('\textbf{\textcolor{yellow}{important text}}');
-
-    // Cleanup
-    unlink($testPath);
 });
 
 it('allows chaining of custom processors in service provider', function () {
@@ -197,20 +139,9 @@ it('allows chaining of custom processors in service provider', function () {
         return $next($content);
     });
 
-    // Create a simple test file
-    $testPath = __DIR__.'/templates/chaining-test.blade.tex';
-    $content = 'Text with \step1{bold text}step1 and \step2{italic text}';
-    file_put_contents($testPath, $content);
-
-    // Setup view path
-    $this->app['view']->addLocation(__DIR__.'/templates');
-
-    $result = view('chaining-test')->render();
+    $result = view('latex.chaining-test')->render();
 
     expect($result)
         ->toContain('\textbf{bold text}')
         ->toContain('\textit{italic text}');
-
-    // Cleanup
-    unlink($testPath);
 });

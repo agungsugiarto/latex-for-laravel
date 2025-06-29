@@ -1,0 +1,8 @@
+\section{\blade{{ $title }}}
+\blade{{ $content }}
+
+\blade{@if($includeSubsections)}
+\blade{@foreach($subsections as $subsection)}
+\subsection{\blade{{ $subsection }}}
+\blade{@endforeach}
+\blade{@endif}

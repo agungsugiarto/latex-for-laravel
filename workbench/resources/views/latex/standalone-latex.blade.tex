@@ -1,0 +1,24 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\newcommand{\blade}[1]{}
+
+\begin{document}
+
+\title{\blade{My Document Title}}
+\author{\blade{Author Name}}
+\maketitle
+
+\section{\blade{Introduction}}
+\blade{This document demonstrates how Blade directives are hidden from LaTeX.}
+
+\blade{The \newcommand{\blade}[1]{} definition makes all \blade{...} commands invisible to LaTeX.}
+
+\section{Mathematical Formulas}
+Here is a formula that LaTeX will render:
+\[
+E = mc^2
+\]
+
+\blade{And here is some dynamic content that would be processed by Blade.}
+
+\end{document}
