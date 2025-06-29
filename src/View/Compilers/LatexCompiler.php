@@ -3,10 +3,59 @@
 namespace Agnula\LatexForLaravel\View\Compilers;
 
 use Illuminate\View\Compilers\BladeCompiler;
+use Illuminate\Pipeline\Pipeline;
 
 final class LatexCompiler extends BladeCompiler
 {
+    /** @var array Custom processors for extending blade directive handling */
+    private array $process = [];
+
+    /** @var array Custom restorers for extending marker restoration */
+    private array $restorers = [];
+
     /**
+     * Add a custom processor to the blade directive pipeline
+     *
+     * @param \Closure $processor A closure that accepts ($content, $next) and returns processed content
+     * @return self For method chaining
+     *
+     * @example
+     * $compiler->addProcessor(function($content, $next) {
+     *     // Custom processing logic here
+     *     $content = str_replace('\custom', 'replacement', $content);
+     *     return $next($content);
+     * });
+     */
+    public function addProcessor(\Closure $processor): self
+    {
+        $this->process[] = $processor;
+
+        return $this;
+    }
+
+    /**
+     * Add a custom restorer to the marker restoration pipeline
+     *
+     * @param \Closure $restorer A closure that accepts ($content, $next) and returns restored content
+     * @return self For method chaining
+     *
+     * @example
+     * $compiler->addRestorer(function($content, $next) {
+     *     // Custom restoration logic here
+     *     $content = str_replace('###CUSTOM_MARKER###', '<?php echo "custom"; ?>', $content);
+     *     return $next($content);
+     * });
+     */
+    public function addRestorer(\Closure $restorer): self
+    {
+        $this->restorers[] = $restorer;
+
+        return $this;
+    }
+
+    /**
+     * Compile the view at the given path with LaTeX-aware processing.
+     *
      * {@inheritdoc}
      */
     public function compile($path = null)
@@ -21,24 +70,14 @@ final class LatexCompiler extends BladeCompiler
 
         $contents = $this->files->get($this->getPath());
 
-        // Transform \blade directives to avoid Blade interference
-
-        // \blade{!! ... !!} → {!! ... !!}
-        $contents = preg_replace('/\\\\blade\s*({!!\s*.*?\s*!!})/s', '$1', $contents);
-
-        // \blade{{ ... }} → temporary marker to preserve LaTeX braces
-        $contents = preg_replace('/\\\\blade\s*{{\s*(.*?)\s*}}/s', '###BLADE_ECHO_START###$1###BLADE_ECHO_END###', $contents);
-
-        // \blade{...} → literal (but exclude cases with {{ or {!!)
-        $contents = preg_replace_callback('/\\\\blade\s*{(?!\{|!!)([^}]*?)}/s', function ($matches) {
-            return trim($matches[1]);
-        }, $contents);
+        // Process \blade directives using Laravel Pipeline
+        $contents = $this->processBladeDirectives($contents);
 
         // Compile with Blade
         $contents = $this->compileString($contents);
 
-        // Restore markers to proper PHP without extra braces
-        $contents = preg_replace('/###BLADE_ECHO_START###(.*?)###BLADE_ECHO_END###/', '<?php echo e($1); ?>', $contents);
+        // Restore markers using Laravel Pipeline
+        $contents = $this->restoreProcessedMarkers($contents);
 
         if (! empty($this->getPath())) {
             $contents = $this->appendFilePath($contents);
@@ -49,5 +88,97 @@ final class LatexCompiler extends BladeCompiler
         );
 
         $this->files->put($compiledPath, $contents);
+    }
+
+    /**
+     * Process \blade directives using Laravel Pipeline
+     */
+    private function processBladeDirectives(string $contents): string
+    {
+        $defaultProcessors = [
+            new class($this) {
+                public function __construct(private LatexCompiler $compiler) {}
+                /**
+                 * Process \blade{!! raw content !!} → {!! raw content !!}
+                 *
+                 * For unescaped LaTeX content that should be rendered as-is. Examples:
+                 * - \blade{!! $latexCommands !!} → {!! $latexCommands !!}
+                 * - \blade{!! '\textbf{Bold Text}' !!} → {!! '\textbf{Bold Text}' !!}
+                 * - \blade{!! $customMacros !!} → {!! $customMacros !!}
+                 */
+                public function handle($content, $next) {
+                    return $next(preg_replace('/\\\\blade\s*({!!\s*.*?\s*!!})/s', '$1', $content));
+                }
+            },
+            new class {
+                /**
+                 * Process \blade{{ expression }} → ###BLADE_ECHO_START###expression###BLADE_ECHO_END###
+                 *
+                 * For escaped output expressions that will be safely rendered in LaTeX. Examples:
+                 * - \blade{{ $documentTitle }} → ###BLADE_ECHO_START###$documentTitle###BLADE_ECHO_END###
+                 * - \blade{{ $author->name }} → ###BLADE_ECHO_START###$author->name###BLADE_ECHO_END###
+                 * - \blade{{ config('latex.documentclass') }} → ###BLADE_ECHO_START###config('latex.documentclass')###BLADE_ECHO_END###
+                 *
+                 * Markers will later be restored to: <?php echo e(expression); ?>
+                 */
+                public function handle($content, $next) {
+                    return $next(preg_replace(
+                        '/\\\\blade\s*{{\s*(.*?)\s*}}/',
+                        '###BLADE_ECHO_START###$1###BLADE_ECHO_END###',
+                        $content
+                    ));
+                }
+            },
+            new class {
+                /**
+                 * Process \blade{literal content} → literal content
+                 *
+                 * For embedding Blade directives, PHP code, or other content that should
+                 * be passed through directly without escaping. Examples:
+                 * - \blade{@if($condition)} → @if($condition)
+                 * - \blade{<?php echo $var; ?>} → <?php echo $var; ?>
+                 * - \blade{@foreach($items as $item)} → @foreach($items as $item)
+                 * - \blade{@yield('content')} → @yield('content')
+                 */
+                public function handle($content, $next) {
+                    return $next(preg_replace_callback(
+                        '/\\\\blade\s*{(?!\{|!!)([^}]*?)}/s',
+                        fn ($matches) => trim($matches[1]),
+                        $content
+                    ));
+                }
+            }
+        ];
+
+        return app(Pipeline::class)
+            ->send($contents)
+            ->through([...$defaultProcessors, ...$this->process])
+            ->then(fn($content) => $content);
+    }
+
+    /**
+     * Restore processed markers to proper PHP code using Laravel Pipeline
+     */
+    private function restoreProcessedMarkers(string $contents): string
+    {
+        $defaultRestorers = [
+            new class {
+                /**
+                 * Restore ###BLADE_ECHO_START###expression###BLADE_ECHO_END### → <?php echo e(expression); ?>
+                 */
+                public function handle($content, $next) {
+                    return $next(preg_replace(
+                        '/###BLADE_ECHO_START###(.*?)###BLADE_ECHO_END###/',
+                        '<?php echo e($1); ?>',
+                        $content
+                    ));
+                }
+            }
+        ];
+
+        return app(Pipeline::class)
+            ->send($contents)
+            ->through([...$defaultRestorers, ...$this->restorers])
+            ->then(fn($content) => $content);
     }
 }
