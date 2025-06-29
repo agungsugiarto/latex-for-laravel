@@ -7,14 +7,6 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // Configure view paths for testing
-        $this->setupViewPaths();
-    }
-
     protected function getPackageProviders($app)
     {
         return [
@@ -27,26 +19,7 @@ class TestCase extends Orchestra
         // Set up application configuration for testing
         $app['config']->set('view.paths', [
             __DIR__.'/../workbench/resources/views',
-            __DIR__.'/../resources/views',
         ]);
-    }
-
-    /**
-     * Set up view paths for testing latex templates
-     */
-    protected function setupViewPaths(): void
-    {
-        $workbenchViewPath = __DIR__.'/../workbench/resources/views';
-        $resourcesViewPath = __DIR__.'/../resources/views';
-
-        // Add both workbench and package views
-        if (is_dir($workbenchViewPath)) {
-            $this->app['view']->addLocation($workbenchViewPath);
-        }
-
-        if (is_dir($resourcesViewPath)) {
-            $this->app['view']->addLocation($resourcesViewPath);
-        }
     }
 
     /**
