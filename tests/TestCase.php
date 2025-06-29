@@ -26,8 +26,8 @@ class TestCase extends Orchestra
     {
         // Set up application configuration for testing
         $app['config']->set('view.paths', [
-            __DIR__ . '/../workbench/resources/views',
-            __DIR__ . '/../resources/views',
+            __DIR__.'/../workbench/resources/views',
+            __DIR__.'/../resources/views',
         ]);
     }
 
@@ -36,8 +36,8 @@ class TestCase extends Orchestra
      */
     protected function setupViewPaths(): void
     {
-        $workbenchViewPath = __DIR__ . '/../workbench/resources/views';
-        $resourcesViewPath = __DIR__ . '/../resources/views';
+        $workbenchViewPath = __DIR__.'/../workbench/resources/views';
+        $resourcesViewPath = __DIR__.'/../resources/views';
 
         // Add both workbench and package views
         if (is_dir($workbenchViewPath)) {
