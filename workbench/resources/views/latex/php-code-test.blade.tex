@@ -1,0 +1,21 @@
+\documentclass{article}
+\newcommand{\blade}[1]{}
+
+\begin{document}
+
+\title{\blade{{ $title }}}
+
+\blade{@php
+    $processedData = strtoupper($data);
+    $formattedOutput = "Processed: " . $processedData;
+@endphp}
+
+Result: \blade{{ $formattedOutput }}
+
+\blade{@php $counter = 0; @endphp}
+\blade{@foreach($items as $item)}
+\blade{@php $counter++; @endphp}
+Item \blade{{ $counter }}: \blade{{ $item }}
+\blade{@endforeach}
+
+\end{document}

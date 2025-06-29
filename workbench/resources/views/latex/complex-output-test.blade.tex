@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\newcommand{\blade}[1]{}
+
+\begin{document}
+
+\title{\blade{{ $title }}}
+\author{\blade{{ $author }}}
+\date{\blade{{ $date }}}
+\maketitle
+
+\tableofcontents
+
+\blade{@foreach($sections as $section)}
+\section{\blade{{ $section['title'] }}}
+\blade{{ $section['content'] }}
+
+\blade{@if(isset($section['subsections']))}
+\blade{@foreach($section['subsections'] as $subsection)}
+\subsection{\blade{{ $subsection['title'] }}}
+\blade{!! $subsection['content'] !!}
+\blade{@endforeach}
+\blade{@endif}
+
+\blade{@endforeach}
+
+\blade{@if($includeReferences)}
+\bibliography{\blade{{ $bibliographyFile }}}
+\blade{@endif}
+
+\end{document}

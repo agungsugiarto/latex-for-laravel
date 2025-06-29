@@ -1,9 +1,6 @@
 <?php
 
 it('renders simple document template correctly', function () {
-    // Setup view path to use our templates directory
-    $this->app['view']->addLocation(__DIR__.'/templates');
-
     $data = [
         'title' => 'My Test Document',
         'author' => 'John Doe',
@@ -18,7 +15,7 @@ it('renders simple document template correctly', function () {
         ],
     ];
 
-    $rendered = view('simple-document', $data)->render();
+    $rendered = view('latex.simple-document', $data)->render();
 
     expect($rendered)
         ->toContain('My Test Document')
@@ -36,9 +33,6 @@ it('renders simple document template correctly', function () {
 });
 
 it('handles bug test template correctly', function () {
-    // Setup view path to use our templates directory
-    $this->app['view']->addLocation(__DIR__.'/templates');
-
     $data = [
         'desa' => (object) [
             'kabupaten' => 'LOMBOK TIMUR',
@@ -48,7 +42,7 @@ it('handles bug test template correctly', function () {
         'unescaped' => 'Content',
     ];
 
-    $rendered = view('bug-test', $data)->render();
+    $rendered = view('latex.bug-test', $data)->render();
 
     expect($rendered)
         // Test the main bug case

@@ -1,0 +1,24 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\newcommand{\blade}[1]{}
+
+\begin{document}
+
+\title{\blade{{ $title }}}
+\author{\blade{{ $author }}}
+\date{\blade{{ $date }}}
+\maketitle
+
+\section{Introduction}
+\blade{{ $introduction }}
+
+\section{Blade Test}
+\blade{@if($showConditional)}
+This content is shown conditionally.
+\blade{@endif}
+
+\blade{@foreach($items as $item)}
+\item \blade{{ $item }}
+\blade{@endforeach}
+
+\end{document}
