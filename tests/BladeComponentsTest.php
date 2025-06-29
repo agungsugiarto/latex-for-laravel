@@ -6,10 +6,10 @@ beforeEach(function () {
     cleanupTestFiles();
 
     // Ensure directories exist
-    if (!is_dir(__DIR__.'/templates')) {
+    if (! is_dir(__DIR__.'/templates')) {
         mkdir(__DIR__.'/templates', 0755, true);
     }
-    if (!is_dir(__DIR__.'/templates/components')) {
+    if (! is_dir(__DIR__.'/templates/components')) {
         mkdir(__DIR__.'/templates/components', 0755, true);
     }
 
@@ -22,15 +22,16 @@ afterEach(function () {
     cleanupTestFiles();
 });
 
-function cleanupTestFiles() {
+function cleanupTestFiles()
+{
     $componentsDir = __DIR__.'/templates/components';
     $templatesDir = __DIR__.'/templates';
 
     // Clean up components directory
     if (is_dir($componentsDir)) {
         $files = glob($componentsDir.'/*');
-        foreach($files as $file) {
-            if(is_file($file)) {
+        foreach ($files as $file) {
+            if (is_file($file)) {
                 unlink($file);
             }
         }
@@ -42,25 +43,28 @@ function cleanupTestFiles() {
         $testTemplateFiles = [
             $templatesDir.'/component-test.blade.tex',
             $templatesDir.'/dynamic-component-test.blade.tex',
-            $templatesDir.'/nested-component-test.blade.tex'
+            $templatesDir.'/nested-component-test.blade.tex',
         ];
-        foreach($testTemplateFiles as $file) {
-            if(is_file($file)) {
+        foreach ($testTemplateFiles as $file) {
+            if (is_file($file)) {
                 unlink($file);
             }
         }
     }
 }
 
-function createComponent(string $name, string $content): void {
+function createComponent(string $name, string $content): void
+{
     file_put_contents(__DIR__."/templates/components/{$name}.blade.tex", $content);
 }
 
-function createTemplate(string $name, string $content): void {
+function createTemplate(string $name, string $content): void
+{
     file_put_contents(__DIR__."/templates/{$name}.blade.tex", $content);
 }
 
-function assertBasicLatexStructure(string $rendered): void {
+function assertBasicLatexStructure(string $rendered): void
+{
     expect($rendered)
         ->toContain('\documentclass{article}')
         ->toContain('\begin{document}')
@@ -69,9 +73,9 @@ function assertBasicLatexStructure(string $rendered): void {
 
 describe('LaTeX Blade Components', function () {
 
-it('renders basic component with conditional subsections', function () {
-    // Create component template using helper - use \blade{} syntax for LaTeX compiler
-    createComponent('latex-section', '\section{\blade{{ $title }}}
+    it('renders basic component with conditional subsections', function () {
+        // Create component template using helper - use \blade{} syntax for LaTeX compiler
+        createComponent('latex-section', '\section{\blade{{ $title }}}
 \blade{{ $content }}
 
 \blade{@if($includeSubsections)}
@@ -80,8 +84,8 @@ it('renders basic component with conditional subsections', function () {
 \blade{@endforeach}
 \blade{@endif}');
 
-    // Create main template using helper - use \blade{} syntax for LaTeX compiler
-    createTemplate('component-test', '\documentclass{article}
+        // Create main template using helper - use \blade{} syntax for LaTeX compiler
+        createTemplate('component-test', '\documentclass{article}
 \begin{document}
 
 \blade{@component(\'components.latex-section\', [
@@ -101,40 +105,40 @@ it('renders basic component with conditional subsections', function () {
 
 \end{document}');
 
-    $testData = [
-        'intro' => 'This is the introduction section content.',
-        'conclusion' => 'This is the conclusion section content.'
-    ];
+        $testData = [
+            'intro' => 'This is the introduction section content.',
+            'conclusion' => 'This is the conclusion section content.',
+        ];
 
-    $rendered = view('component-test', $testData)->render();
+        $rendered = view('component-test', $testData)->render();
 
-    // Assert basic LaTeX structure
-    assertBasicLatexStructure($rendered);
+        // Assert basic LaTeX structure
+        assertBasicLatexStructure($rendered);
 
-    // Assert section content
-    expect($rendered)
-        ->toContain('\section{Introduction}')
-        ->toContain('This is the introduction section content.')
-        ->toContain('\subsection{Overview}')
-        ->toContain('\subsection{Goals}')
-        ->toContain('\section{Conclusion}')
-        ->toContain('This is the conclusion section content.');
+        // Assert section content
+        expect($rendered)
+            ->toContain('\section{Introduction}')
+            ->toContain('This is the introduction section content.')
+            ->toContain('\subsection{Overview}')
+            ->toContain('\subsection{Goals}')
+            ->toContain('\section{Conclusion}')
+            ->toContain('This is the conclusion section content.');
 
-    // Verify conditional rendering: only Introduction has subsections
-    $subsectionCount = substr_count($rendered, '\subsection{');
-    expect($subsectionCount)->toBe(2, 'Only Introduction section should have subsections');
-});
+        // Verify conditional rendering: only Introduction has subsections
+        $subsectionCount = substr_count($rendered, '\subsection{');
+        expect($subsectionCount)->toBe(2, 'Only Introduction section should have subsections');
+    });
 
-it('handles dynamic data binding in components', function () {
-    // Create component template using helper - use \blade{} syntax for LaTeX compiler
-    createComponent('data-section', '\section{\blade{{ $title }}}
+    it('handles dynamic data binding in components', function () {
+        // Create component template using helper - use \blade{} syntax for LaTeX compiler
+        createComponent('data-section', '\section{\blade{{ $title }}}
 
 \blade{@foreach($items as $item)}
 \item \blade{{ $item[\'name\'] }}: \blade{{ $item[\'value\'] }}
 \blade{@endforeach}');
 
-    // Create main template using helper - use \blade{} syntax for LaTeX compiler
-    createTemplate('dynamic-component-test', '\documentclass{article}
+        // Create main template using helper - use \blade{} syntax for LaTeX compiler
+        createTemplate('dynamic-component-test', '\documentclass{article}
 \begin{document}
 
 \blade{@component(\'components.data-section\', [
@@ -145,31 +149,31 @@ it('handles dynamic data binding in components', function () {
 
 \end{document}');
 
-    $testData = [
-        'stats' => [
-            ['name' => 'Total Users', 'value' => '1,234'],
-            ['name' => 'Active Sessions', 'value' => '89'],
-            ['name' => 'Revenue', 'value' => '$12,345']
-        ]
-    ];
+        $testData = [
+            'stats' => [
+                ['name' => 'Total Users', 'value' => '1,234'],
+                ['name' => 'Active Sessions', 'value' => '89'],
+                ['name' => 'Revenue', 'value' => '$12,345'],
+            ],
+        ];
 
-    $rendered = view('dynamic-component-test', $testData)->render();
+        $rendered = view('dynamic-component-test', $testData)->render();
 
-    // Assert document structure
-    assertBasicLatexStructure($rendered);
+        // Assert document structure
+        assertBasicLatexStructure($rendered);
 
-    // Assert component content
-    expect($rendered)->toContain('\section{Statistics}');
+        // Assert component content
+        expect($rendered)->toContain('\section{Statistics}');
 
-    // Verify all items are rendered correctly
-    foreach ($testData['stats'] as $stat) {
-        expect($rendered)->toContain($stat['name'] . ': ' . $stat['value']);
-    }
-});
+        // Verify all items are rendered correctly
+        foreach ($testData['stats'] as $stat) {
+            expect($rendered)->toContain($stat['name'].': '.$stat['value']);
+        }
+    });
 
-it('supports nested component composition', function () {
-    // Create parent component using helper - use \blade{} syntax for LaTeX compiler
-    createComponent('document-section', '\section{\blade{{ $title }}}
+    it('supports nested component composition', function () {
+        // Create parent component using helper - use \blade{} syntax for LaTeX compiler
+        createComponent('document-section', '\section{\blade{{ $title }}}
 \blade{{ $content }}
 
 \blade{@if(isset($subsection))}
@@ -180,12 +184,12 @@ it('supports nested component composition', function () {
 \blade{@endcomponent}
 \blade{@endif}');
 
-    // Create child component using helper - use \blade{} syntax for LaTeX compiler
-    createComponent('sub-section', '\subsection{\blade{{ $title }}}
+        // Create child component using helper - use \blade{} syntax for LaTeX compiler
+        createComponent('sub-section', '\subsection{\blade{{ $title }}}
 \blade{{ $content }}');
 
-    // Create main template using helper - use \blade{} syntax for LaTeX compiler
-    createTemplate('nested-component-test', '\documentclass{article}
+        // Create main template using helper - use \blade{} syntax for LaTeX compiler
+        createTemplate('nested-component-test', '\documentclass{article}
 \begin{document}
 
 \blade{@component(\'components.document-section\', [
@@ -200,17 +204,17 @@ it('supports nested component composition', function () {
 
 \end{document}');
 
-    $rendered = view('nested-component-test')->render();
+        $rendered = view('nested-component-test')->render();
 
-    // Assert document structure
-    assertBasicLatexStructure($rendered);
+        // Assert document structure
+        assertBasicLatexStructure($rendered);
 
-    // Assert nested component content
-    expect($rendered)
-        ->toContain('\section{Main Section}')
-        ->toContain('This is the main content.')
-        ->toContain('\subsection{Sub Section}')
-        ->toContain('This is sub content.');
-});
+        // Assert nested component content
+        expect($rendered)
+            ->toContain('\section{Main Section}')
+            ->toContain('This is the main content.')
+            ->toContain('\subsection{Sub Section}')
+            ->toContain('This is sub content.');
+    });
 
 });

@@ -14,7 +14,7 @@ function setupMathExtension()
     $compiler = app('latex.compiler');
 
     // Process \blademath{} directives
-    $compiler->addProcessor(function($content, $next) {
+    $compiler->addProcessor(function ($content, $next) {
         // Convert \blademath{expression} to markers
         $content = preg_replace(
             '/\\\\blademath\s*{(.*?)}/s',
@@ -26,7 +26,7 @@ function setupMathExtension()
     });
 
     // Restore math markers to specialized PHP
-    $compiler->addRestorer(function($content, $next) {
+    $compiler->addRestorer(function ($content, $next) {
         $content = preg_replace(
             '/###MATH_START###(.*?)###MATH_END###/',
             '<?php echo "MATH_RENDERED[$1]"; ?>',
@@ -44,7 +44,7 @@ it('can register math extension processors', function () {
 
     // The setupMathExtension() in beforeEach should have registered processors
     // Test that we can add more processors
-    $result = $compiler->addProcessor(function($content, $next) {
+    $result = $compiler->addProcessor(function ($content, $next) {
         return $next($content);
     });
 
@@ -85,7 +85,7 @@ it('renders math extension template correctly', function () {
         'equations' => [
             (object) ['description' => 'Pythagorean theorem', 'formula' => 'a^2 + b^2 = c^2'],
             (object) ['description' => 'Einstein equation', 'formula' => 'E = mc^2'],
-        ]
+        ],
     ];
 
     $rendered = view('math-extension', $data)->render();

@@ -22,7 +22,7 @@ Simple document content.
 
     $data = [
         'title' => 'Test Document',
-        'author' => 'Test Author'
+        'author' => 'Test Author',
     ];
 
     // Test tex-string output by checking that view renders correctly
@@ -94,21 +94,21 @@ it('processes complex template structure correctly', function () {
                 'subsections' => [
                     [
                         'title' => 'Background',
-                        'content' => '\textbf{Important background information}'
+                        'content' => '\textbf{Important background information}',
                     ],
                     [
                         'title' => 'Objectives',
-                        'content' => '\textit{Research objectives}'
-                    ]
-                ]
+                        'content' => '\textit{Research objectives}',
+                    ],
+                ],
             ],
             [
                 'title' => 'Methodology',
-                'content' => 'This describes the methodology.'
-            ]
+                'content' => 'This describes the methodology.',
+            ],
         ],
         'includeReferences' => true,
-        'bibliographyFile' => 'references.bib'
+        'bibliographyFile' => 'references.bib',
     ];
 
     $rendered = view('complex-output-test', $data)->render();
@@ -166,7 +166,7 @@ Item \blade{{ $counter }}: \blade{{ $item }}
     $data = [
         'title' => 'PHP Code Test',
         'data' => 'hello world',
-        'items' => ['First', 'Second', 'Third']
+        'items' => ['First', 'Second', 'Third'],
     ];
 
     $rendered = view('php-code-test', $data)->render();
@@ -188,7 +188,7 @@ it('handles template with includes and yields', function () {
     // Create header partial
     $headerPath = __DIR__.'/templates/partials/latex-header.blade.tex';
 
-    if (!is_dir(__DIR__.'/templates/partials')) {
+    if (! is_dir(__DIR__.'/templates/partials')) {
         mkdir(__DIR__.'/templates/partials', 0755, true);
     }
 
@@ -221,7 +221,7 @@ it('handles template with includes and yields', function () {
     $this->app['view']->addLocation(__DIR__.'/templates');
 
     $data = [
-        'title' => 'Include Test Document'
+        'title' => 'Include Test Document',
     ];
 
     $rendered = view('include-test', $data)->render();
@@ -313,8 +313,8 @@ Reference to equation \ref{eq:main} above.
         'conclusions' => [
             'The structure is preserved correctly.',
             'All LaTeX commands remain valid.',
-            'Blade directives are processed properly.'
-        ]
+            'Blade directives are processed properly.',
+        ],
     ];
 
     $rendered = view('structure-test', $data)->render();

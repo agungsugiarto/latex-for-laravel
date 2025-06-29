@@ -10,7 +10,7 @@ it('can add processors to compiler', function () {
     $compiler = app('latex.compiler');
 
     // This should not throw an exception
-    $result = $compiler->addProcessor(function($content, $next) {
+    $result = $compiler->addProcessor(function ($content, $next) {
         return $next($content);
     });
 
@@ -21,7 +21,7 @@ it('can add restorers to compiler', function () {
     $compiler = app('latex.compiler');
 
     // This should not throw an exception
-    $result = $compiler->addRestorer(function($content, $next) {
+    $result = $compiler->addRestorer(function ($content, $next) {
         return $next($content);
     });
 

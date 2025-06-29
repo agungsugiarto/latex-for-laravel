@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\ServiceProvider;
 use Agnula\LatexForLaravel\View\Compilers\LatexCompiler;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * Mock service provider for testing extension pattern
@@ -19,7 +19,7 @@ class TestLatexExtensionServiceProvider extends ServiceProvider
         $compiler = $this->app->make('latex.compiler');
 
         // Add processor for academic citations
-        $compiler->addProcessor(function($content, $next) {
+        $compiler->addProcessor(function ($content, $next) {
             // Convert \acadcite{author}{year} to proper LaTeX citation
             $content = preg_replace(
                 '/\\\\acadcite\s*{([^}]+)}\s*{([^}]+)}/',
@@ -31,7 +31,7 @@ class TestLatexExtensionServiceProvider extends ServiceProvider
         });
 
         // Add processor for dynamic table generation
-        $compiler->addProcessor(function($content, $next) {
+        $compiler->addProcessor(function ($content, $next) {
             // Process \bladetable{} for complex table structures
             $content = preg_replace(
                 '/\\\\bladetable\s*{(.*?)}/s',
@@ -127,7 +127,7 @@ Multiple citations: \acadcite{Smith}{2021} and \acadcite{Brown}{2022}.
     $this->app['view']->addLocation(__DIR__.'/templates');
 
     $data = [
-        'title' => 'Research Document'
+        'title' => 'Research Document',
     ];
 
     $rendered = view('service-provider-test', $data)->render();
@@ -150,9 +150,10 @@ it('handles multiple service provider extensions', function () {
 
     // Second extension with different functionality
     $compiler = app('latex.compiler');
-    $compiler->addProcessor(function($content, $next) {
+    $compiler->addProcessor(function ($content, $next) {
         $content = str_replace('\highlight{', '\textbf{\textcolor{yellow}{', $content);
         $content = str_replace('}highlight', '}}', $content);
+
         return $next($content);
     });
 
@@ -178,18 +179,21 @@ it('allows chaining of custom processors in service provider', function () {
     $compiler = app('latex.compiler');
 
     // Simulate service provider registration with multiple processors
-    $compiler->addProcessor(function($content, $next) {
+    $compiler->addProcessor(function ($content, $next) {
         $content = str_replace('\step1{', '\textbf{', $content);
+
         return $next($content);
     });
 
-    $compiler->addProcessor(function($content, $next) {
+    $compiler->addProcessor(function ($content, $next) {
         $content = str_replace('}step1', '}', $content);
+
         return $next($content);
     });
 
-    $compiler->addProcessor(function($content, $next) {
+    $compiler->addProcessor(function ($content, $next) {
         $content = str_replace('\step2{', '\textit{', $content);
+
         return $next($content);
     });
 

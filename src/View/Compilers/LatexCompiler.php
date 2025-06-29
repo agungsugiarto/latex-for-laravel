@@ -2,8 +2,8 @@
 
 namespace Agnula\LatexForLaravel\View\Compilers;
 
-use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\View\Compilers\BladeCompiler;
 
 final class LatexCompiler extends BladeCompiler
 {
@@ -16,7 +16,7 @@ final class LatexCompiler extends BladeCompiler
     /**
      * Add a custom processor to the blade directive pipeline
      *
-     * @param \Closure $processor A closure that accepts ($content, $next) and returns processed content
+     * @param  \Closure  $processor  A closure that accepts ($content, $next) and returns processed content
      * @return self For method chaining
      *
      * @example
@@ -36,7 +36,7 @@ final class LatexCompiler extends BladeCompiler
     /**
      * Add a custom restorer to the marker restoration pipeline
      *
-     * @param \Closure $restorer A closure that accepts ($content, $next) and returns restored content
+     * @param  \Closure  $restorer  A closure that accepts ($content, $next) and returns restored content
      * @return self For method chaining
      *
      * @example
@@ -96,8 +96,10 @@ final class LatexCompiler extends BladeCompiler
     private function processBladeDirectives(string $contents): string
     {
         $defaultProcessors = [
-            new class($this) {
+            new class($this)
+            {
                 public function __construct(private LatexCompiler $compiler) {}
+
                 /**
                  * Process \blade{!! raw content !!} → {!! raw content !!}
                  *
@@ -106,11 +108,13 @@ final class LatexCompiler extends BladeCompiler
                  * - \blade{!! '\textbf{Bold Text}' !!} → {!! '\textbf{Bold Text}' !!}
                  * - \blade{!! $customMacros !!} → {!! $customMacros !!}
                  */
-                public function handle($content, $next) {
+                public function handle($content, $next)
+                {
                     return $next(preg_replace('/\\\\blade\s*({!!\s*.*?\s*!!})/s', '$1', $content));
                 }
             },
-            new class {
+            new class
+            {
                 /**
                  * Process \blade{{ expression }} → ###BLADE_ECHO_START###expression###BLADE_ECHO_END###
                  *
@@ -121,7 +125,8 @@ final class LatexCompiler extends BladeCompiler
                  *
                  * Markers will later be restored to: <?php echo e(expression); ?>
                  */
-                public function handle($content, $next) {
+                public function handle($content, $next)
+                {
                     return $next(preg_replace(
                         '/\\\\blade\s*{{\s*(.*?)\s*}}/',
                         '###BLADE_ECHO_START###$1###BLADE_ECHO_END###',
@@ -129,7 +134,8 @@ final class LatexCompiler extends BladeCompiler
                     ));
                 }
             },
-            new class {
+            new class
+            {
                 /**
                  * Process \blade{literal content} → literal content
                  *
@@ -140,20 +146,21 @@ final class LatexCompiler extends BladeCompiler
                  * - \blade{@foreach($items as $item)} → @foreach($items as $item)
                  * - \blade{@yield('content')} → @yield('content')
                  */
-                public function handle($content, $next) {
+                public function handle($content, $next)
+                {
                     return $next(preg_replace_callback(
                         '/\\\\blade\s*{(?!\{|!!)([^}]*?)}/s',
                         fn ($matches) => trim($matches[1]),
                         $content
                     ));
                 }
-            }
+            },
         ];
 
         return app(Pipeline::class)
             ->send($contents)
             ->through([...$defaultProcessors, ...$this->process])
-            ->then(fn($content) => $content);
+            ->then(fn ($content) => $content);
     }
 
     /**
@@ -162,23 +169,25 @@ final class LatexCompiler extends BladeCompiler
     private function restoreProcessedMarkers(string $contents): string
     {
         $defaultRestorers = [
-            new class {
+            new class
+            {
                 /**
                  * Restore ###BLADE_ECHO_START###expression###BLADE_ECHO_END### → <?php echo e(expression); ?>
                  */
-                public function handle($content, $next) {
+                public function handle($content, $next)
+                {
                     return $next(preg_replace(
                         '/###BLADE_ECHO_START###(.*?)###BLADE_ECHO_END###/',
                         '<?php echo e($1); ?>',
                         $content
                     ));
                 }
-            }
+            },
         ];
 
         return app(Pipeline::class)
             ->send($contents)
             ->through([...$defaultRestorers, ...$this->restorers])
-            ->then(fn($content) => $content);
+            ->then(fn ($content) => $content);
     }
 }

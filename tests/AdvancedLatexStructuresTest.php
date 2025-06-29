@@ -1,17 +1,15 @@
 <?php
 
-use Agnula\LatexForLaravel\View\Compilers\LatexCompiler;
-
 beforeEach(function () {
     $compiler = app('latex.compiler');
 
     // Add mathematical notation processor
-    $compiler->addProcessor(function($content, $next) {
+    $compiler->addProcessor(function ($content, $next) {
         // Convert \bladeformula{} to proper math environments
         $content = preg_replace_callback(
             '/\\\\bladeformula\s*{(.*?)}/s',
-            function($matches) {
-                return "\\begin{align}\n" . trim($matches[1]) . "\n\\end{align}";
+            function ($matches) {
+                return "\\begin{align}\n".trim($matches[1])."\n\\end{align}";
             },
             $content
         );
@@ -20,7 +18,7 @@ beforeEach(function () {
     });
 
     // Add figure handling processor
-    $compiler->addProcessor(function($content, $next) {
+    $compiler->addProcessor(function ($content, $next) {
         // Process dynamic figure inclusion
         $content = preg_replace(
             '/\\\\bladefigure\s*{([^}]+)}\s*{([^}]+)}\s*{([^}]+)}/',
@@ -103,7 +101,7 @@ Formula: {{ $formula->latex }}
         'formulas' => [
             (object) ['latex' => 'F = ma'],
             (object) ['latex' => 'PV = nRT'],
-        ]
+        ],
     ];
 
     $rendered = view('advanced-document', $data)->render();
